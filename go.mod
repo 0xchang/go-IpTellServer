@@ -3,6 +3,7 @@ module IpTellServer
 go 1.17
 
 require (
+	github.com/dlclark/regexp2 v1.7.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/mattn/go-sqlite3 v1.14.15
@@ -11,7 +12,6 @@ require (
 )
 
 require (
-	github.com/dlclark/regexp2 v1.7.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
