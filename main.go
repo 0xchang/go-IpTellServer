@@ -4,12 +4,14 @@ import (
 	"IpTellServer/controller"
 	"IpTellServer/logmiddleware"
 	"flag"
+	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	fmt.Println("IpTellServer   v1.1")
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.Use(logmiddleware.MyLog())
@@ -17,6 +19,7 @@ func main() {
 	//r.GET("/test", controller.Test)
 	r.GET("/ip", controller.GetIp)
 	r.GET("/get", controller.MyGet)
+	r.GET("/info", controller.Info)
 	var (
 		port int
 		host string
