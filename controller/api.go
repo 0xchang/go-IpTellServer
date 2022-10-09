@@ -83,6 +83,10 @@ func MyGet(c *gin.Context) {
 func Info(c *gin.Context) {
 	res := ""
 	qip := c.Query("ip")
+	if strings.Compare(qip, "") == 0 {
+		c.String(400, "参数不合法")
+		return
+	}
 	m, _ := Reip.FindStringMatch(qip)
 	if m != nil {
 		qip = m.String()
@@ -98,11 +102,21 @@ func Info(c *gin.Context) {
 		data.Myvalue = reqAddrApi(qip)
 		mydbs.DataInsert(&data)
 		m, _ = Readdr.FindStringMatch(data.Myvalue)
+		if m == nil {
+			c.String(400, "参数不合法")
+			return
+		}
 		res = m.String()
+
 	} else {
 		//有数据
 		m, _ = Readdr.FindStringMatch(data.Myvalue)
+		if m == nil {
+			c.String(400, "参数不合法")
+			return
+		}
 		res = m.String()
+
 	}
 	res, _ = strconv.Unquote(strings.ReplaceAll(strconv.QuoteToASCII(res), `\\u`, `\u`))
 	c.JSON(200, gin.H{

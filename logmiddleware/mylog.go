@@ -83,6 +83,18 @@ func MyLog() gin.HandlerFunc {
 	//返回handler
 	return func(ctx *gin.Context) {
 		startTime := time.Now()
+		if ctx.Request.UserAgent() == "" {
+			ctx.String(403, `
+			<html>
+			<head><title>403 Forbidden</title></head>
+			<body>
+			<center><h1>403 Forbidden</h1></center>
+			<hr><center>nginx/1.22.0</center>
+			</body>
+			</html>
+			`)
+			return
+		}
 		ctx.Next()
 		stopTime := time.Since(startTime)
 		spendTime := fmt.Sprintf("%d us", int(math.Ceil(float64(stopTime.Nanoseconds()/1000))))
@@ -103,9 +115,9 @@ func MyLog() gin.HandlerFunc {
 		if len(ctx.Errors) > 0 { // 矿建内部错误
 			Log.Error(ctx.Errors.ByType(gin.ErrorTypePrivate))
 		}
-		if statusCode > 500 {
+		if statusCode >= 500 {
 			Log.Error()
-		} else if statusCode > 400 {
+		} else if statusCode >= 400 {
 			Log.Warn()
 		} else {
 			Log.Info()

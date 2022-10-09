@@ -17,6 +17,7 @@ var (
 	create_table = `create table if not exists mydata (myip text,mytime integer,myvalue text)`
 	dbname       = "data/data.db"
 	dbtype       = "sqlite3"
+	sqldb        *sql.DB
 )
 
 func initDir(filepath string) {
@@ -38,6 +39,9 @@ func init() {
 	//初始化文件夹
 	initDir("data")
 	//初始化数据库
+	var err error
+	sqldb, err = sql.Open(dbtype, dbname)
+	checkErr(err)
 	TableCreate()
 }
 
@@ -48,36 +52,23 @@ func checkErr(err error) {
 }
 
 func TableCreate() {
-	db, err := sql.Open(dbtype, dbname)
-	checkErr(err)
-	defer db.Close()
-	db.Exec(create_table)
+	sqldb.Exec(create_table)
 }
 
 func DataInsert(data *Mydata) {
-	db, err := sql.Open(dbtype, dbname)
-	checkErr(err)
-	defer db.Close()
 	insert_into_sql := "insert into mydata (myip,mytime,myvalue) values(?,?,?)"
-	db.Exec(insert_into_sql, data.Myip, data.Mytime, data.Myvalue)
+	sqldb.Exec(insert_into_sql, data.Myip, data.Mytime, data.Myvalue)
 }
 
 func DataUpdate(data *Mydata) {
-	db, err := sql.Open(dbtype, dbname)
-	checkErr(err)
-	defer db.Close()
 	update_sql := "update mydata set mytime=?,myvalue=? where myip=?"
-	db.Exec(update_sql, data.Mytime, data.Myvalue, data.Myip)
+	sqldb.Exec(update_sql, data.Mytime, data.Myvalue, data.Myip)
 }
 
 func DataSelect(myip string) (Mydata, error) {
-	db, err := sql.Open(dbtype, dbname)
 	var m Mydata
-	checkErr(err)
-	defer db.Close()
 	select_ip_sql := "select * from mydata where myip=?"
-	rows := db.QueryRow(select_ip_sql, myip)
-
-	err = rows.Scan(&m.Myip, &m.Mytime, &m.Myvalue)
+	rows := sqldb.QueryRow(select_ip_sql, myip)
+	err := rows.Scan(&m.Myip, &m.Mytime, &m.Myvalue)
 	return m, err
 }
